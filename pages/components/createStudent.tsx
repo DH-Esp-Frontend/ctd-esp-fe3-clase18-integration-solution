@@ -14,48 +14,86 @@ type StudentData = {
 };
 
 export const Form: React.FC = () => {
-  const { register, handleSubmit, formState:{errors} } = useForm()
+  const { register, handleSubmit,setFocus, formState:{errors} } = useForm()
 
   function onSubmit(data: any) {
     console.log(data)
   }
 
+  React.useEffect(()=>{
+    setFocus("user")
+  },[])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div>
         <label htmlFor="name">Nombre:</label>
-        <input type="text" id="name"  {...register("example")} />
-        {errors.name && <p>El nombre es requerido y debe tener al menos 2 caracteres</p>}
+        <input
+          type="text"
+          id="name"
+          {...register("name", { required: true, minLength: 2 })}
+        />
+        {errors.name?.type === "required" && (
+          <p>Please, the name is required</p>
+        )}
+        {errors.name?.type === "minLength" && (
+          <p>Please, the name should have at least 2 chars</p>
+        )}
       </div>
       <div>
         <label htmlFor="course">Curso:</label>
-        <input type="text" id="course"  {...register("example")} />
-        {errors.course && <p>El curso es requerido y debe tener al menos 2 caracteres</p>}
+        <input
+          type="text"
+          id="course"
+          {...register("course", { required: true, minLength: 2 })}
+        />
+        {errors.course?.type === "required" && (
+          <p>Please, the course is required</p>
+        )}
+        {errors.course?.type === "minLength" && (
+          <p>Please, the course should have at least 2 chars</p>
+        )}
       </div>
       <div>
         <label htmlFor="email">Email:</label>
-        <input type="text" id="email"  {...register("example")} />
-        {errors.email && <p>El email es requerido y debe ser válido</p>}
+        <input
+          type="text"
+          id="email"
+          {...register("email", {
+            required: true,
+            minLength: 2,
+            pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+          })}
+        />
+        {errors.email?.type === "required" && (
+          <p>Please, the email is required</p>
+        )}
+        {errors.email?.type === "minLength" && (
+          <p>Please, the email should have at least 2 chars</p>
+        )}
+        {errors.email?.type === "pattern" && <p>formato no valido</p>}
       </div>
       <div>
         <label htmlFor="birthdate">Fecha de nacimiento (opcional):</label>
-        <input type="date" id="birthdate" name="birthdate" {...register} />
+        <input
+          type="date"
+          id="birthdate"
+        />
+      
       </div>
       <div>
         <label htmlFor="average">Promedio:</label>
         <div>
-        <label htmlFor="firstQuarter">Primer bimestre:</label>
-        <input type="text" id="firstQuarter"  {...register("example")} />
-        {errors.average?.firstQuarter && <p>El promedio del primer bimestre es requerido y debe ser una letra entre A y F</p>}
+          <label htmlFor="firstQuarter">Primer bimestre:</label>
+          <input type="text" id="firstQuarter" {...register("firstQuarter")} />
         </div>
         <div>
-        <label htmlFor="secondQuarter">Segundo bimestre:</label>
-        <input type="text" id="secondQuarter"  {...register("example")} />
-        {errors.average?.secondQuarter && <p>El promedio del segundo b</p>}
+          <label htmlFor="secondQuarter">Segundo bimestre:</label>
+          <input type="text" id="secondQuarter" {...register("example")} />
         </div>
+        <input type="submit" value="enviar" />
       </div>
-      </form>
-      )
+    </form>
+  );
 
 }
