@@ -1,5 +1,36 @@
 import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm,Controller } from 'react-hook-form'
+import { TextField, Typography,Box } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { width } from '@mui/system';
+import { alignProperty } from '@mui/material/styles/cssUtils';
+
+const NameRules = {
+  required: "Please, the field name is required",
+  minLength: {value:2, message: "Please, the field name should have at least 2 chars"}
+};
+
+const CourseRules = {
+  required: "Please, the field course is required",
+  minLength: {
+    value: 2,
+    message: "Please, the field course should have at least 2 chars",
+  },
+};
+
+const EmailRules = {
+  required: "Please, the field course is required",
+  minLength: {
+    value: 2,
+    message: "Please, the field course should have at least 2 chars",
+  },
+  pattern: {
+    value: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+    message: "Invalid email, please enter a valid format"
+  },
+};
 
 type StudentData = {
   name: string,
@@ -14,8 +45,8 @@ type StudentData = {
 };
 
 export const Form: React.FC = () => {
-  const { register, handleSubmit,setFocus, formState:{errors} } = useForm()
-
+  const { register,control, handleSubmit,setFocus, formState:{errors} } = useForm()
+const [selectedDate, handleDateChange] = useState(new Date());
   function onSubmit(data: any) {
     console.log(data)
   }
@@ -26,73 +57,111 @@ export const Form: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <label htmlFor="name">Nombre:</label>
-        <input
-          type="text"
-          id="name"
-          {...register("name", { required: true, minLength: 2 })}
+      <Box>
+        <Typography
+          variant="h3"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          Create a new student
+        </Typography>
+        {/* INPUT NAME */}
+        <Controller
+          name="name"
+          control={control}
+          rules={NameRules}
+          defaultValue=""
+          render={({ field: { onChange, value, ref } }) => (
+            <TextField
+              label={"Name:"}
+              fullWidth
+              inputRef={ref}
+              onChange={onChange}
+              value={value}
+              error={!!errors.name}
+              helperText={`${errors.name?.message || ""}`}
+            />
+          )}
         />
-        {errors.name?.type === "required" && (
-          <p>Please, the name is required</p>
-        )}
-        {errors.name?.type === "minLength" && (
-          <p>Please, the name should have at least 2 chars</p>
-        )}
-      </div>
-      <div>
-        <label htmlFor="course">Curso:</label>
-        <input
-          type="text"
-          id="course"
-          {...register("course", { required: true, minLength: 2 })}
+        {/* INPUT COURSE */}
+        <Controller
+          name="course"
+          control={control}
+          rules={CourseRules}
+          defaultValue=""
+          render={({ field: { onChange, value, ref } }) => (
+            <TextField
+              label={"Course:"}
+              fullWidth
+              inputRef={ref}
+              onChange={onChange}
+              value={value}
+              error={!!errors.name}
+              helperText={`${errors.course?.message || ""}`}
+            />
+          )}
         />
-        {errors.course?.type === "required" && (
-          <p>Please, the course is required</p>
-        )}
-        {errors.course?.type === "minLength" && (
-          <p>Please, the course should have at least 2 chars</p>
-        )}
-      </div>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="text"
-          id="email"
-          {...register("email", {
-            required: true,
-            minLength: 2,
-            pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
-          })}
+        {/* INPUT EMAIL */}
+        <Controller
+          name="mail"
+          control={control}
+          rules={EmailRules}
+          defaultValue=""
+          render={({ field: { onChange, value, ref } }) => (
+            <TextField
+              label={"Email:"}
+              fullWidth
+              inputRef={ref}
+              onChange={onChange}
+              value={value}
+              error={!!errors.name}
+              helperText={`${errors.mail?.message || ""}`}
+            />
+          )}
         />
-        {errors.email?.type === "required" && (
-          <p>Please, the email is required</p>
-        )}
-        {errors.email?.type === "minLength" && (
-          <p>Please, the email should have at least 2 chars</p>
-        )}
-        {errors.email?.type === "pattern" && <p>formato no valido</p>}
-      </div>
-      <div>
-        <label htmlFor="birthdate">Fecha de nacimiento (opcional):</label>
-        <input
-          type="date"
-          id="birthdate"
+        <Typography variant="subtitle1" component="h2">
+          Promedio:
+        </Typography>
+        {/* INPUT FIRST QUARTER */}
+        <Controller
+          name="firstQuarter"
+          control={control}
+          defaultValue=""
+          render={({ field: { onChange, value, ref } }) => (
+            <TextField
+              sx={{ width: "50%" }}
+              label={"First Quarter:"}
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              fullWidth
+              inputRef={ref}
+              type="number"
+              onChange={onChange}
+              value={value}
+            />
+          )}
         />
-      
-      </div>
-      <div>
-        <label htmlFor="average">Promedio:</label>
-        <div>
-          <label htmlFor="firstQuarter">Primer bimestre:</label>
-          <input type="text" id="firstQuarter" {...register("firstQuarter")} />
-        </div>
-        <div>
-          <label htmlFor="secondQuarter">Segundo bimestre:</label>
-          <input type="text" id="secondQuarter" {...register("example")} />
-        </div>
-        <input type="submit" value="enviar" />
-      </div>
+        {/* INPUT SECOND QUARTER */}
+        <Controller
+          name="secondQuarter"
+          control={control}
+          defaultValue=""
+          render={({ field: { onChange, value, ref } }) => (
+            <TextField
+              sx={{ width: "50%" }}
+              label={"Second Quarter:"}
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              fullWidth
+              inputRef={ref}
+              type="number"
+              onChange={onChange}
+              value={value}
+            />
+          )}
+        />
+      </Box>
     </form>
   );
 
