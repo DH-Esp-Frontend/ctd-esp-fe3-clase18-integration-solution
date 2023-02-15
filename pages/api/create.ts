@@ -3,17 +3,20 @@ import { students } from "./db";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method == "POST") {
-    const { name, course } = req.body;
-    students.push({
+    const { name, course, firstQuarter, secondQuarter,email } = req.body;
+
+    const newStudent = {
       id: `${students.length}`,
       name,
       course,
+      email,
       average: {
-        firstQuarter: "0",
-        secondQuarter: "0",
+        firstQuarter,
+        secondQuarter,
       },
-    });
-    res.status(200).json({message:"agregado correctamente"});
+    };
+    students.push(newStudent);
+    res.status(200).json({ message: "agregado correctamente", newStudent });
     
   }
 }
